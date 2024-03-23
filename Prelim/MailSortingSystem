@@ -1,0 +1,72 @@
+import java.util.*;
+
+public class MailSortingSystem {
+
+    static class Mail {
+        String recipient;
+        String content;
+
+        public Mail(String recipient, String content) {
+            this.recipient = recipient;
+            this.content = content;
+        }
+
+        public String getRecipient() {
+            return recipient;
+        }
+
+        public String getContent() {
+            return content;
+        }
+    }
+
+    // Decrease and Conquer sorting method
+    public static List<Mail> sortMail(List<Mail> mailList) {
+        if (mailList.size() <= 1) {
+            return mailList;
+        }
+
+        // Decrease: Divide mail into batches based on recipient's department, floor, etc.
+        Map<String, List<Mail>> batches = new HashMap<>();
+        for (Mail mail : mailList) {
+            String recipient = mail.getRecipient();
+            batches.putIfAbsent(recipient, new ArrayList<>());
+            batches.get(recipient).add(mail);
+        }
+
+        // Conquer: Sort each batch individually
+        List<Mail> sortedMail = new ArrayList<>();
+        for (List<Mail> batch : batches.values()) {
+            sortedMail.addAll(sortBatch(batch));
+        }
+
+        return sortedMail;
+    }
+
+    // Sorting method for individual batches
+    private static List<Mail> sortBatch(List<Mail> batch) {
+        // Here you can use any sorting algorithm, like Merge Sort or Quick Sort
+        Collections.sort(batch, Comparator.comparing(Mail::getRecipient));
+        return batch;
+    }
+
+    // Example usage
+    public static void main(String[] args) {
+        // Sample mail data
+        List<Mail> mailList = new ArrayList<>();
+        mailList.add(new Mail("Finance", "Invoice"));
+        mailList.add(new Mail("HR", "Job application"));
+        mailList.add(new Mail("IT", "Software update"));
+        mailList.add(new Mail("Finance", "Budget report"));
+        mailList.add(new Mail("HR", "Employee benefits"));
+
+        // Sorting mail using Decrease and Conquer approach
+        List<Mail> sortedMail = sortMail(mailList);
+
+        // Print sorted mail
+        System.out.println("Sorted Mail:");
+        for (Mail mail : sortedMail) {
+            System.out.println("Recipient: " + mail.getRecipient() + ", Content: " + mail.getContent());
+        }
+    }
+}
